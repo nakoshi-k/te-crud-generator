@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%%= title %%></title>
+    <%%- include('../../views/tile/head') %%>
+  </head>
+  <body>
+<%%- include('../../views/tile/body-initial') %%>
+<%%- include('../../views/tile/navigation') %%>
+
+<div class="wrap">
+  <div class="container">
+    <div class="row">
+      <div class="column column-25">
+          <%%- include('./sidebar') %%>
+      </div>
+      <div class="column column-75">
+
+        <%%- hlp.crud.delete( "delete" , { path : "/<%= names %>/#" , id : task.id , csrf : csrf , redirect : "/tasks" } ) %%>
+        <%%- hlp.form.start( "<%= name %>" , <%= name %> , { "id" : "edit" ,"method" :"put" , "action" : "/tasks/:id" }); %%>
+          <div class="form-item">
+            <label for="title">Title</label>
+            <%%- hlp.form.input( "id" , { type : "hidden"}); %%>
+            <%%- hlp.form.input( "title"); %%>
+          </div>
+          <div class="form-item">
+            <label for="priod">Priod</label>
+            <%%- hlp.form.input( "priod" ); %%>
+          </div>
+          <%%- hlp.form.submit( "送信" , { "class" : "xhr-post" , "data-target" : "#edit" } ); %%>
+        <%%- hlp.form.end(); %%>
+      </div>
+    </div>
+  </div>
+
+</div>
+<%%- include('../../views/tile/footer') %%>
+<%%- include('../../views/tile/scripts') %%>
+<%%- include('../../views/tile/body-final') %%>
+  </body>
+</html>
+

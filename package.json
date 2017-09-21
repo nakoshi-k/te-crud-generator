@@ -1,0 +1,24 @@
+{
+  "name": "ten-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "test": "",
+    "start": "node ./dist/main.js"
+  },
+  "author": "kei nakoshi",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.5.7",
+    "glob": "^7.1.2",
+    "inquirer": "^3.3.0",
+    "minimist": "^1.2.0",
+    "mkdirp": "^0.5.1",
+    "sequelize": "^4.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.28",
+    "mysql2": "^1.4.2"
+  }
+}
