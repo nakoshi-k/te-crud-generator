@@ -1,4 +1,5 @@
 {
     "modelDirectory" : "models",
-    "templateDirectory" : "apps/templates"
+    "templateDirectory" : "apps/templates",
+    "outDirectory" : "apps/"
 }

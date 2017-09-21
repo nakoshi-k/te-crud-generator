@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
+    <title><%%= title %%></title>
     <%%- include('../../views/tile/head') %%>
   </head>
   <body>
@@ -20,7 +20,7 @@
         <%%- hlp.form.start( "<%= name %>" , <%= name %> , {"method" :"post" , "action" : "./" }); %%>
           <div class="form-item">
             <label for="title">Name</label>
-            <%- hlp.form.input("name"); %>
+            <%%- hlp.form.input("name"); %%>
 
           </div>
           <div class="form-item">

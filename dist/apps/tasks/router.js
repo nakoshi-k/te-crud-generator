@@ -6,7 +6,7 @@ const helpers = require("../../base/helper");
 class tasks_router extends router_1.router {
     constructor() {
         super();
-        this.name = tasks;
+        this.name = "tasks";
         this.beforeRender = (req, res) => {
             this.helper("form", new helpers.form());
             this.helper("pagination", new helpers.pagination());

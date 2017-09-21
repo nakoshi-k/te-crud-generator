@@ -2,40 +2,14 @@ import * as fs from "fs";
 import * as path from "path";
 import * as glob from "glob";
 import * as inquirer from "inquirer";
+import {model_to_rsv} from "./crud";
+
 const ds = path.sep;
-
-class create_crud{
-    private _fields = {};
-    private _name = "";
-    private _template = "";
-    private _config :config;
-    set fields (fields){
-        this._fields = fields;
-    }
-    set name (name :string){
-        this._name = name;
-    }
-    set template(template :string){
-        this._template = template;
-    }
-    set config(config:config){
-        this._config = config;
-    }
-
-
-
-    public create = () => {
-        let create = new Promise( (resolve,reject) => {
-            
-            resolve();
-        } )
-    }
-
-}
 
 interface config{
     modelDirectory : string;
     templateDirectory : string;
+    outDirectory : string;
 }
 
 class cli {
@@ -135,18 +109,20 @@ class cli {
         let selectModel = await this.q_model(models);
         let templates = await this.listTemplates();
         let selectTemplate = await this.q_selecttemplate(templates);
-        let orverwrite = await this.q_overwrite();
-        let crud = new create_crud();
+        let overwrite = await this.q_overwrite();
+        let crud = new model_to_rsv();
         crud.name = selectModel.model;
         crud.fields = app.models[ selectModel.model ].rawAttributes;
         crud.template = selectTemplate.template;
         crud.config = this.config;
-        await crud.create();
-
+        crud.overwrite = overwrite.overwrite;
+        return crud;
     }
 
     public start(){
-        return this.plot();
+        return this.plot().then(crud => {
+            crud.build();
+        });
     }  
 
 }

@@ -12,31 +12,8 @@ const fs = require("fs");
 const path = require("path");
 const glob = require("glob");
 const inquirer = require("inquirer");
+const crud_1 = require("./crud");
 const ds = path.sep;
-class create_crud {
-    constructor() {
-        this._fields = {};
-        this._name = "";
-        this._template = "";
-        this.create = () => {
-            let create = new Promise((resolve, reject) => {
-                resolve();
-            });
-        };
-    }
-    set fields(fields) {
-        this._fields = fields;
-    }
-    set name(name) {
-        this._name = name;
-    }
-    set template(template) {
-        this._template = template;
-    }
-    set config(config) {
-        this._config = config;
-    }
-}
 class cli {
     constructor() {
         this.listModels = () => {
@@ -122,17 +99,20 @@ class cli {
             let selectModel = yield this.q_model(models);
             let templates = yield this.listTemplates();
             let selectTemplate = yield this.q_selecttemplate(templates);
-            let orverwrite = yield this.q_overwrite();
-            let crud = new create_crud();
+            let overwrite = yield this.q_overwrite();
+            let crud = new crud_1.model_to_rsv();
             crud.name = selectModel.model;
             crud.fields = app.models[selectModel.model].rawAttributes;
             crud.template = selectTemplate.template;
             crud.config = this.config;
-            yield crud.create();
+            crud.overwrite = overwrite.overwrite;
+            return crud;
         });
     }
     start() {
-        return this.plot();
+        return this.plot().then(crud => {
+            crud.build();
+        });
     }
 }
 let app = new cli();

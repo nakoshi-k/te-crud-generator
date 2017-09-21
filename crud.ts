@@ -6,7 +6,7 @@ import * as ejs from "ejs";
 import * as inflection from "inflection";
 const ds = path.sep;
 
-class model_to_rsv{
+export class model_to_rsv{
     private _fields = {};
     private _name = "";
     private _template = "";
@@ -124,35 +124,59 @@ class model_to_rsv{
     }
 
     public read(file){
-        let read = new Promise((resolve , reject) => {
-            let templatePath = this._config.templateDirectory + ds + this._template + ds;
-            console.log(templatePath);
-            fs.readFile( templatePath + ds + file , "utf-8" , (err,data) => {
-                if(err){
-                    reject(err);
-                }
-                resolve(data);
-            })
+    let read = new Promise((resolve , reject) => {
+        let td = path.resolve( this._config.templateDirectory);
+        let templatePath = td + ds + this._template + ds;
+        fs.readFile( templatePath + ds + file , "utf-8" , (err,data) => {
+            if(err){
+                reject(err);
+            }
+            resolve(data);
         })
-        return read;
+    })
+    return read;
     }
     public preCreate(){
         
     }
-    public create = ( str ,file ) => {
-        let create = new Promise((resolve) => {
-            console.log(this.data);
-            let source = ejs.render(str, this.data );
-            let outFilename = file.replace(/\.ejs$/,"");
-            let outDir = this._config.outDirectory  + ds + this._name;
-            try{
-                mkdirp.sync(outDir);
-            }catch(e){
-                throw e;
+    public _overwrite = true;
+    set overwrite (status:boolean) {
+        this._overwrite = status;
+    }
+
+    public fileAccess = (file) =>  {
+    let fileAccess = new Promise( (resolve,reject) => {
+        fs.access(file ,function(err){
+            if(err){
+                resolve(false);
+                return
             }
-            let out = outDir + ds + outFilename;
+            resolve(true);
+        })
+    } )
+    return fileAccess;
+    }
+    
+    public create = ( str ,file ) => {
+    let create = new Promise((resolve) => {
+        let source = ejs.render(str, this.data );
+        let outFilename = file.replace(/\.ts\.ejs$/,".ts");
+        let outDir = path.resolve(this._config.outDirectory)  + ds + this._name;
+        let subDir = file.split(ds);
+        subDir.pop();
+        subDir.join(ds);
+        try{
+            mkdirp.sync(outDir + ds + subDir);
+        }catch(e){
+            throw e;
+        }
+        let out = outDir + ds + outFilename;
+        this.fileAccess(out).then(res => {
+            if( res === true && this._overwrite === false ){
+                console.log(`skip file ${out}`);
+                return;
+            }
             fs.writeFile(out, source , function (err) {
-                console.log(err);
                 if (err) {
                     console.log(err);
                     throw err;
@@ -160,12 +184,40 @@ class model_to_rsv{
                 console.log(`create file ${out}` );
             });
         })
+    })
     }
     
     async readCreate( file ){
         let template = await this.read(file);
         return this.create(template,file);
     }
+    
+    public templates = () => {
+        let templates = new Promise((resolve,reject) => {
+            let td = this._config.templateDirectory + ds + this._template;
+            td = path.resolve(td) + ds;
+            let d = `${td}**${ds}*.ejs`;
+            glob( d , {} , function (er, files) {
+                if(er){
+                    reject();
+                }
+                for(let key in files){
+                    files[key] = files[key].replace(td, "");
+                }
+                resolve(files);
+            })
+        })
+        return templates;
+    }
+
+    async build(){
+        let templates = await this.templates();
+        for (let key in templates) {
+            this.readCreate(templates[key]);
+        }
+        return true;
+    }
+
 
 }
 
@@ -174,22 +226,3 @@ interface config{
     templateDirectory : string;
     outDirectory : string;
 }
-
-let mtr = new model_to_rsv();
-
-let config = {
-    templateDirectory : __dirname + "/../apps/templates",
-    modelDirectory: __dirname + `/../models`,
-    outDirectory : __dirname + "/../" + "apps"
-}
-
-mtr.config = config;
-let models = require(config.modelDirectory);
-mtr.template = "default";
-mtr.fields = models.tasks.attributes
-mtr.name = "tasks";
-
-mtr.readCreate("router.ts.ejs").then( () => {
-}).catch((err) => {
-    console.log(err);
-});
