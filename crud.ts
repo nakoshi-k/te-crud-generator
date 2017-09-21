@@ -3,6 +3,7 @@ import * as mkdirp from "mkdirp";
 import * as path from "path";
 import * as glob from "glob";
 import * as ejs from "ejs";
+import * as inflection from "inflection";
 const ds = path.sep;
 
 class model_to_rsv{
@@ -22,11 +23,16 @@ class model_to_rsv{
     set config(config:config){
         this._config = config;
     }
-
+    get name(){
+        return inflection.singularize(this._name);
+    }
+    get names(){
+        return inflection.pluralize(this._name);
+    }
     get data(){
         return {
-            name : this._name,
-            names : this._name,
+            name : this.name,
+            names : this.names,
             fields : this.viewFields()
         }
     }
@@ -119,7 +125,14 @@ class model_to_rsv{
 
     public read(file){
         let read = new Promise((resolve , reject) => {
-            resolve("aaaa");
+            let templatePath = this._config.templateDirectory + ds + this._template + ds;
+            console.log(templatePath);
+            fs.readFile( templatePath + ds + file , "utf-8" , (err,data) => {
+                if(err){
+                    reject(err);
+                }
+                resolve(data);
+            })
         })
         return read;
     }
@@ -128,16 +141,20 @@ class model_to_rsv{
     }
     public create = ( str ,file ) => {
         let create = new Promise((resolve) => {
-            let source = ejs.render(str, this.viewFields());
+            console.log(this.data);
+            let source = ejs.render(str, this.data );
             let outFilename = file.replace(/\.ejs$/,"");
-            mkdirp.sync(this._config.outDirectory + ds + this._name)
-            let out = this._config.outDirectory + ds + this._name + ds + outFilename;
-            console.log(out);
-            console.log(source);
+            let outDir = this._config.outDirectory  + ds + this._name;
+            try{
+                mkdirp.sync(outDir);
+            }catch(e){
+                throw e;
+            }
+            let out = outDir + ds + outFilename;
             fs.writeFile(out, source , function (err) {
                 console.log(err);
                 if (err) {
-                    console.log(133);
+                    console.log(err);
                     throw err;
                 }
                 console.log(`create file ${out}` );
@@ -159,11 +176,13 @@ interface config{
 }
 
 let mtr = new model_to_rsv();
+
 let config = {
-    templateDirectory : `../apps/templates`,
-    modelDirectory: `../models`,
+    templateDirectory : __dirname + "/../apps/templates",
+    modelDirectory: __dirname + `/../models`,
     outDirectory : __dirname + "/../" + "apps"
 }
+
 mtr.config = config;
 let models = require(config.modelDirectory);
 mtr.template = "default";
