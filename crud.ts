@@ -109,10 +109,7 @@ export class model_to_rsv{
         let fields = this._fields;
         let viewFields = {};
         for(let key in fields){
-            if(String(key) === "created_at" ||
-               String(key) === "updated_at"){
-                continue;
-            }
+
             let f = {
                 name : key,
                 tag : this.tag(fields[key]),
