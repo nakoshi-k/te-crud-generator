@@ -26,7 +26,7 @@ class model_to_rsv {
             if (this.className(field) === "DATE") {
                 cssClass += " calender";
             }
-            return "";
+            return cssClass;
         };
         this.typesTags = {
             "STRING": "input",
