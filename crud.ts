@@ -107,7 +107,7 @@ export class model_to_rsv{
 
     public viewFields = () => {
         let fields = this._fields;
-        let viewFields = {};
+        let viewFields = [];
         for(let key in fields){
 
             let f = {
@@ -115,7 +115,7 @@ export class model_to_rsv{
                 tag : this.tag(fields[key]),
                 attr : this.attr(fields[key])
             }
-            viewFields[key] = f;
+            viewFields.push(f);
         }
         return viewFields;
     }
