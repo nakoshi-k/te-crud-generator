@@ -55,13 +55,16 @@ export class model_to_rsv{
         if(dbtit[className]){
             type = dbtit[className];
         }        
+        if(field.primaryKey){
+            type = "hidden;"
+        };
         return type;
     }
 
     public cssClass = (field) => {
         let cssClass = "";
         if(this.className(field) === "DATE"){
-            cssClass += " " + "calender";
+            cssClass += " calender";
         }
         return "";
     }
@@ -89,7 +92,7 @@ export class model_to_rsv{
                 htmlAttr["length"] = options.lenght;
             }
         }
-        htmlAttr["css"] = this.cssClass(field);
+        htmlAttr["class"] = this.cssClass(field);
         
         if(this.tag(field) !== "textarea" ){
             htmlAttr["type"] = this.attrType(field);
