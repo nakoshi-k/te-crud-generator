@@ -21,7 +21,7 @@ class model_to_rsv {
         this._name = "";
         this._template = "";
         this.className = (field) => {
-            return field.type.constructor.name;
+            return field.type.constructor.key;
         };
         this.DBTypesInputTypes = {
             "STRING": "text",

@@ -38,7 +38,7 @@ export class model_to_rsv{
     }
 
     public className = (field) =>{
-        return field.type.constructor.name;
+        return field.type.constructor.key;
     }
 
     private DBTypesInputTypes = {
