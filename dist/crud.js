@@ -53,14 +53,14 @@ class model_to_rsv {
             if (this.tag(field) !== "textarea") {
                 htmlAttr["type"] = this.attrType(field);
             }
-            let htmlAttrString = "";
+            let htmlAttrString = [];
             for (let key in htmlAttr) {
                 if (htmlAttr[key] === "") {
                     continue;
                 }
-                htmlAttrString += ` ${key}="${htmlAttr[key]}"`;
+                htmlAttrString.push(`"${key}" : "${htmlAttr[key]}"`);
             }
-            return htmlAttrString;
+            return `{ ${htmlAttrString.join(",")} }`;
         };
         this.viewFields = () => {
             let fields = this._fields;

@@ -95,14 +95,14 @@ export class model_to_rsv{
             htmlAttr["type"] = this.attrType(field);
         }
         
-        let htmlAttrString = ""
+        let htmlAttrString = [];
         for( let key in htmlAttr ){
             if( htmlAttr[key] === ""){
                 continue;
             }
-            htmlAttrString += ` ${key}="${htmlAttr[key]}"`
+            htmlAttrString.push(`"${key}" : "${htmlAttr[key]}"`)
         }
-        return htmlAttrString;
+        return  `{ ${htmlAttrString.join(",")} }`;
     }    
 
     public viewFields = () => {
