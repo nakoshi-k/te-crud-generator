@@ -8,6 +8,7 @@
     "test": "",
     "start": "node ./dist/main.js"
   },
+  "bin" : {"tengenerator" : "dist/main.js"},
   "author": "kei nakoshi",
   "license": "ISC",
   "dependencies": {
