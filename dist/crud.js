@@ -66,7 +66,7 @@ class model_to_rsv {
                 if (htmlAttr[key] === "") {
                     continue;
                 }
-                htmlAttrString.push(`"${key}" : "${htmlAttr[key]}"`);
+                htmlAttrString.push(`"${key}" : "${htmlAttr[key].trim()}"`);
             }
             return `{ ${htmlAttrString.join(",")} }`;
         };
