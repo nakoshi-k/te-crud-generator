@@ -33,7 +33,8 @@ export class model_to_rsv{
         return {
             name : this.name,
             names : this.names,
-            fields : this.viewFields()
+            fields : this.viewFields(),
+            template : this._template
         }
     }
 
@@ -131,6 +132,7 @@ export class model_to_rsv{
             if(err){
                 reject(err);
             }
+
             resolve(data);
         })
     })
@@ -188,8 +190,8 @@ export class model_to_rsv{
     }
     
     async readCreate( file ){
-        let template = await this.read(file);
-        return this.create(template,file);
+        let str = await this.read(file);
+        return this.create(str,file);
     }
     
     public templates = () => {

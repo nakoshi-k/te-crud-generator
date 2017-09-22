@@ -166,7 +166,8 @@ class model_to_rsv {
         return {
             name: this.name,
             names: this.names,
-            fields: this.viewFields()
+            fields: this.viewFields(),
+            template: this._template
         };
     }
     attrType(field) {
@@ -202,8 +203,8 @@ class model_to_rsv {
     }
     readCreate(file) {
         return __awaiter(this, void 0, void 0, function* () {
-            let template = yield this.read(file);
-            return this.create(template, file);
+            let str = yield this.read(file);
+            return this.create(str, file);
         });
     }
     build() {
