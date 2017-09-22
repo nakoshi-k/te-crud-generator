@@ -64,18 +64,14 @@ class model_to_rsv {
         };
         this.viewFields = () => {
             let fields = this._fields;
-            let viewFields = {};
+            let viewFields = [];
             for (let key in fields) {
-                if (String(key) === "created_at" ||
-                    String(key) === "updated_at") {
-                    continue;
-                }
                 let f = {
                     name: key,
                     tag: this.tag(fields[key]),
                     attr: this.attr(fields[key])
                 };
-                viewFields[key] = f;
+                viewFields.push(f);
             }
             return viewFields;
         };
