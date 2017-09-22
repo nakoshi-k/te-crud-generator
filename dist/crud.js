@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const mkdirp = require("mkdirp");
@@ -192,16 +200,20 @@ class model_to_rsv {
     set overwrite(status) {
         this._overwrite = status;
     }
-    async readCreate(file) {
-        let template = await this.read(file);
-        return this.create(template, file);
+    readCreate(file) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let template = yield this.read(file);
+            return this.create(template, file);
+        });
     }
-    async build() {
-        let templates = await this.templates();
-        for (let key in templates) {
-            this.readCreate(templates[key]);
-        }
-        return true;
+    build() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let templates = yield this.templates();
+            for (let key in templates) {
+                this.readCreate(templates[key]);
+            }
+            return true;
+        });
     }
 }
 exports.model_to_rsv = model_to_rsv;
