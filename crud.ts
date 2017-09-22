@@ -108,7 +108,7 @@ export class model_to_rsv{
         }
         return  `{ ${htmlAttrString.join(",")} }`;
     }    
-
+    /* for form data*/
     public viewFields = () => {
         let fields = this._fields;
         let viewFields = [];
@@ -161,6 +161,8 @@ export class model_to_rsv{
     
     public create = ( str ,file ) => {
     let create = new Promise((resolve) => {
+        let data =  this.data;
+        data["action"] = file.split(ds).pop();
         let source = ejs.render(str, this.data );
         let outFilename = file.replace(/\.ts\.ejs$/,".ts");
         let outDir = path.resolve(this._config.outDirectory)  + ds + this._name;
