@@ -12,7 +12,7 @@ interface config{
     outDirectory : string;
 }
 
-class cli {
+export class cli {
     
     public models;
 
@@ -112,7 +112,7 @@ class cli {
         let overwrite = await this.q_overwrite();
         let crud = new model_to_rsv();
         crud.name = selectModel.model;
-        crud.fields = app.models[ selectModel.model ].rawAttributes;
+        crud.fields = this.models[ selectModel.model ].rawAttributes;
         crud.template = selectTemplate.template;
         crud.config = this.config;
         crud.overwrite = overwrite.overwrite;
@@ -128,7 +128,3 @@ class cli {
 }
 
 
-
-let app = new cli();
-
-app.start()

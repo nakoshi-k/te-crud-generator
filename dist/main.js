@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const path = require("path");
@@ -93,21 +85,19 @@ class cli {
             choices: models
         });
     }
-    plot() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let models = yield this.listModels();
-            let selectModel = yield this.q_model(models);
-            let templates = yield this.listTemplates();
-            let selectTemplate = yield this.q_selecttemplate(templates);
-            let overwrite = yield this.q_overwrite();
-            let crud = new crud_1.model_to_rsv();
-            crud.name = selectModel.model;
-            crud.fields = app.models[selectModel.model].rawAttributes;
-            crud.template = selectTemplate.template;
-            crud.config = this.config;
-            crud.overwrite = overwrite.overwrite;
-            return crud;
-        });
+    async plot() {
+        let models = await this.listModels();
+        let selectModel = await this.q_model(models);
+        let templates = await this.listTemplates();
+        let selectTemplate = await this.q_selecttemplate(templates);
+        let overwrite = await this.q_overwrite();
+        let crud = new crud_1.model_to_rsv();
+        crud.name = selectModel.model;
+        crud.fields = this.models[selectModel.model].rawAttributes;
+        crud.template = selectTemplate.template;
+        crud.config = this.config;
+        crud.overwrite = overwrite.overwrite;
+        return crud;
     }
     start() {
         return this.plot().then(crud => {
@@ -115,5 +105,4 @@ class cli {
         });
     }
 }
-let app = new cli();
-app.start();
+exports.cli = cli;
