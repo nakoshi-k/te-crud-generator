@@ -169,7 +169,7 @@ class model_to_rsv {
             type = dbtit[className];
         }
         if (field.primaryKey) {
-            type = "hidden;";
+            type = "hidden";
         }
         ;
         return type;
