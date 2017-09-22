@@ -64,7 +64,7 @@ export class model_to_rsv{
     public cssClass = (field) => {
         let cssClass = "";
         if(this.className(field) === "DATE"){
-            cssClass += " calender";
+            cssClass += " calendar";
         }
         return cssClass;
     }
