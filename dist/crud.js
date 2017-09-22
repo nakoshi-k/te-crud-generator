@@ -100,7 +100,7 @@ class model_to_rsv {
         this.create = (str, file) => {
             let create = new Promise((resolve) => {
                 let data = this.data;
-                data["action"] = file.split(ds).pop();
+                data["action"] = file.split(ds).pop().split(".").shift();
                 let source = ejs.render(str, data);
                 let outFilename = file.replace(/\.ts\.ejs$/, ".ts");
                 let outDir = path.resolve(this._config.outDirectory) + ds + this._name;
