@@ -47,6 +47,7 @@ export class model_to_rsv{
         "TEXT" : "textarea",
         "INTEGER" : "number",
         "BIGINT" : "number",
+        "DATE" : "date",
     }
 
     public attrType (field){
@@ -164,7 +165,7 @@ export class model_to_rsv{
         let data =  this.data;
         data["action"] = file.split(ds).pop().split(".").shift();
         let source = ejs.render(str, data );
-        let outFilename = file.replace(/\.ts\.ejs$/,".ts");
+        let outFilename = file.replace(/\.(.*)\.ejs$/,".$1");
         let outDir = path.resolve(this._config.outDirectory)  + ds + this._name;
         let subDir = file.split(ds);
         subDir.pop();
