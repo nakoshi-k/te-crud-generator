@@ -34,7 +34,8 @@ export class model_to_rsv{
             name : this.name,
             names : this.names,
             fields : this.viewFields(),
-            template : this._template
+            template : this._template,
+            inflection : inflection
         }
     }
 
@@ -47,7 +48,7 @@ export class model_to_rsv{
         "TEXT" : "textarea",
         "INTEGER" : "number",
         "BIGINT" : "number",
-        "DATE" : "date",
+        "DATE" : "datetime-local",
     }
 
     public attrType (field){
@@ -56,10 +57,16 @@ export class model_to_rsv{
         let dbtit = this.DBTypesInputTypes;
         if(dbtit[className]){
             type = dbtit[className];
-        }        
+        }       
         if(field.primaryKey){
             type = "hidden"
         };
+        if(/password/gi.test(field.fieldName)){
+            type = "password"
+        }
+        if(/mail/gi.test(field.fieldName)){
+            type = "email"
+        }
         return type;
     }
 
@@ -108,20 +115,49 @@ export class model_to_rsv{
             htmlAttrString.push(`"${key}" : "${htmlAttr[key].trim()}"`)
         }
         return  `{ ${htmlAttrString.join(",")} }`;
-    }    
+    }
+
+    public attrString = (field) => {
+        let htmlAttr = {};
+        let options = field.options
+        if(options){
+            if(typeof options.length !== "undefined"){
+                htmlAttr["length"] = options.lenght;
+            }
+        }
+        htmlAttr["class"] = this.cssClass(field);
+        
+        if(this.tag(field) !== "textarea" ){
+            htmlAttr["type"] = this.attrType(field);
+        }
+        
+        let htmlAttrString = [];
+        for( let key in htmlAttr ){
+            if( htmlAttr[key] === ""){
+                continue;
+            }
+            htmlAttrString.push(`${key}="${htmlAttr[key].trim()}"`)
+        }
+        return htmlAttrString.join(" ");
+    }  
+
     /* for form data*/
     public viewFields = () => {
         let fields = this._fields;
         let viewFields = [];
         for(let key in fields){
-
+            if(key === "password"){
+                continue
+            }
             let f = {
                 name : key,
                 tag : this.tag(fields[key]),
-                attr : this.attr(fields[key])
+                attr : this.attr(fields[key]),
+                attrString : this.attrString(fields[key]),
             }
             viewFields.push(f);
         }
+
         return viewFields;
     }
 

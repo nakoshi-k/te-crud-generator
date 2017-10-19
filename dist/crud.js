@@ -28,6 +28,7 @@ class model_to_rsv {
             "TEXT": "textarea",
             "INTEGER": "number",
             "BIGINT": "number",
+            "DATE": "datetime-local",
         };
         this.cssClass = (field) => {
             let cssClass = "";
@@ -70,15 +71,40 @@ class model_to_rsv {
             }
             return `{ ${htmlAttrString.join(",")} }`;
         };
+        this.attrString = (field) => {
+            let htmlAttr = {};
+            let options = field.options;
+            if (options) {
+                if (typeof options.length !== "undefined") {
+                    htmlAttr["length"] = options.lenght;
+                }
+            }
+            htmlAttr["class"] = this.cssClass(field);
+            if (this.tag(field) !== "textarea") {
+                htmlAttr["type"] = this.attrType(field);
+            }
+            let htmlAttrString = [];
+            for (let key in htmlAttr) {
+                if (htmlAttr[key] === "") {
+                    continue;
+                }
+                htmlAttrString.push(`${key}="${htmlAttr[key].trim()}"`);
+            }
+            return htmlAttrString.join(" ");
+        };
         /* for form data*/
         this.viewFields = () => {
             let fields = this._fields;
             let viewFields = [];
             for (let key in fields) {
+                if (key === "password") {
+                    continue;
+                }
                 let f = {
                     name: key,
                     tag: this.tag(fields[key]),
-                    attr: this.attr(fields[key])
+                    attr: this.attr(fields[key]),
+                    attrString: this.attrString(fields[key]),
                 };
                 viewFields.push(f);
             }
@@ -102,7 +128,7 @@ class model_to_rsv {
                 let data = this.data;
                 data["action"] = file.split(ds).pop().split(".").shift();
                 let source = ejs.render(str, data);
-                let outFilename = file.replace(/\.ts\.ejs$/, ".ts");
+                let outFilename = file.replace(/\.(.*)\.ejs$/, ".$1");
                 let outDir = path.resolve(this._config.outDirectory) + ds + this._name;
                 let subDir = file.split(ds);
                 subDir.pop();
@@ -170,7 +196,8 @@ class model_to_rsv {
             name: this.name,
             names: this.names,
             fields: this.viewFields(),
-            template: this._template
+            template: this._template,
+            inflection: inflection
         };
     }
     attrType(field) {
@@ -184,6 +211,12 @@ class model_to_rsv {
             type = "hidden";
         }
         ;
+        if (/password/gi.test(field.fieldName)) {
+            type = "password";
+        }
+        if (/mail/gi.test(field.fieldName)) {
+            type = "email";
+        }
         return type;
     }
     read(file) {
